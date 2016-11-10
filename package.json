@@ -1,0 +1,14 @@
+{
+  "name": "anti-sudoku",
+  "version": "1.0.0",
+  "description": "2 player game inspired by sudoku",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luke Nagy <lukejsnagy@gmail.com>",
+  "license": "MIT"
+}
