@@ -1,6 +1,8 @@
 var should = require('should');
 var {AntiSudoku} = require('../src/lib/anti-sudoku.js');
 
+should.Assertion.addChain('return');
+
 describe('Anti Sudoku', () => {
   var game;
 
@@ -13,7 +15,7 @@ describe('Anti Sudoku', () => {
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (val > 9) val = 1;
-        game.placeNumber(val, row, col);
+        game.placeNumber(val, row, col).should.return.true();
         game.grid[row][col].should.match({value: val});
         val++;
       }
@@ -22,17 +24,17 @@ describe('Anti Sudoku', () => {
   });
 
   it('should only allow me to place 1 to 9', () => {
-    game.placeNumber(0, 0, 0);
+    game.placeNumber(0, 0, 0).should.return.false();
     game.grid[0][0].should.be.empty();
-    game.placeNumber(10, 0, 0);
+    game.placeNumber(10, 0, 0).should.return.false();
     game.grid[0][0].should.be.empty();
   });
 
   it('should only allow me to place a number if the cell is not empty', () => {
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
-        game.placeNumber(1, row, col);
-        game.placeNumber(2, row, col);
+        game.placeNumber(1, row, col).should.return.true();
+        game.placeNumber(2, row, col).should.return.false();
         game.grid[row][col].should.match({value: 1});
         game = new AntiSudoku();
       }
@@ -71,7 +73,7 @@ describe('Anti Sudoku', () => {
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             if (i + j !== 0) {
-              game.placeNumber(val, row + i, col + j);
+              game.placeNumber(val, row + i, col + j).should.return.false();
               game.grid[row + i][col + j].should.be.empty();
             }
           }
@@ -79,5 +81,26 @@ describe('Anti Sudoku', () => {
         game = new AntiSudoku();
       }
     }
+  });
+
+  it('should allow me to remove my number', () => {
+    game.placeNumber(1, 0, 0);
+    game.currentPlayer = 1;
+    game.removeNumber(0, 0).should.return.true();
+    game.grid[0][0].should.be.empty();
+  });
+
+  it('should not allow me to remove another player\'s number', () => {
+    game.placeNumber(1, 0, 0);
+    game.removeNumber(0, 0).should.return.false();
+    game.grid[0][0].should.not.be.empty();
+  });
+
+  it('should not allow me to place the last removed number on the same cell', () => {
+    game.placeNumber(1, 0, 0);
+    game.currentPlayer = 1;
+    game.removeNumber(0, 0);
+    game.placeNumber(1, 0, 0).should.return.false();
+    game.grid[0][0].should.be.empty();
   });
 });
