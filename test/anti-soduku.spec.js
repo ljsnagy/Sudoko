@@ -84,8 +84,7 @@ describe('Anti Sudoku', () => {
   });
 
   it('should allow me to remove my number', () => {
-    game.placeNumber(1, 0, 0);
-    game.currentPlayer = 1;
+    game.placeNumber(1, 0, 0, false);
     game.removeNumber(0, 0).should.return.true();
     game.grid[0][0].should.be.empty();
   });
@@ -97,10 +96,102 @@ describe('Anti Sudoku', () => {
   });
 
   it('should not allow me to place the last removed number on the same cell', () => {
-    game.placeNumber(1, 0, 0);
-    game.currentPlayer = 1;
+    game.placeNumber(1, 0, 0, false);
     game.removeNumber(0, 0);
     game.placeNumber(1, 0, 0).should.return.false();
     game.grid[0][0].should.be.empty();
+  });
+
+  it('should allow me to move my number to the same row', () => {
+    var val = 1;
+    for (let row = 0; row < 9; row++) {
+      for (let col = 1; col < 9; col++) {
+        game.placeNumber(val, row, 0, false);
+        game.moveNumber(row, 0, row, col).should.return.true();
+        game.grid[row][col].should.match({value: val});
+        game.grid[row][0].should.be.empty();
+        game = new AntiSudoku();
+      }
+    }
+  });
+
+  it('should allow me to move my number to the same column', () => {
+    var val = 1;
+    for (let col = 0; col < 9; col++) {
+      for (let row = 1; row < 9; row++) {
+        game.placeNumber(val, 0, col, false);
+        game.moveNumber(0, col, row, col).should.return.true();
+        game.grid[row][col].should.match({value: val});
+        game.grid[0][col].should.be.empty();
+        game = new AntiSudoku();
+      }
+    }
+  });
+
+  it('should allow me to move my number to the same nonet', () => {
+    var val = 1;
+    for (let row = 0; row < 9; row += 3) {
+      for (let col = 0; col < 9; col += 3) {
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            game.placeNumber(val, row, col, false);
+            if (i + j !== 0) {
+              game.moveNumber(row, col, row + i, col + j).should.return.true();
+              game.grid[row + i][col + j].should.match({value: val});
+              game.grid[row][col].should.be.empty();
+            }
+            game = new AntiSudoku();
+          }
+        }
+      }
+    }
+  });
+
+  it('should not allow me to move my number anywhere else', () => {
+    var val = 1;
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        game.placeNumber(val, 0, 0, false);
+        if (row !== 0 && col !== 0 && (Math.floor(row / 3) !== 0 && Math.floor(col / 3) !== 0)) {
+          game.moveNumber(0, 0, row, col).should.return.false();
+          game.grid[0][0].should.match({value: val});
+          game.grid[row][col].should.be.empty();
+        }
+        game = new AntiSudoku();
+      }
+    }
+  });
+
+  it('should not allow me to move another player\'s number', () => {
+    game.placeNumber(1, 0, 0);
+    game.moveNumber(0, 0, 1, 0).should.return.false();
+    game.grid[0][0].should.match({value: 1});
+    game.grid[1][0].should.be.empty();
+  });
+
+  it('should not allow me to move an empty cell', () => {
+    game.moveNumber(0, 0, 1, 0).should.return.false();
+    game.grid[1][0].should.be.empty();
+  });
+
+  it('should not allow me to move my number to another number', () => {
+    game.placeNumber(1, 0, 0);
+    game.placeNumber(2, 1, 0);
+    game.moveNumber(0, 0, 1, 0).should.return.false();
+    game.grid[0][0].should.match({value: 1});
+    game.grid[1][0].should.match({value: 2});
+  });
+
+  it('should not allow me to move my number to an illegal position', () => {
+    game.placeNumber(1, 0, 0);
+    game.placeNumber(1, 8, 8);
+
+    game.moveNumber(0, 0, 8, 0).should.return.false();
+    game.grid[0][0].should.match({value: 1});
+    game.grid[8][0].should.be.empty();
+
+    game.moveNumber(0, 0, 0, 8).should.return.false();
+    game.grid[0][0].should.match({value: 1});
+    game.grid[0][8].should.be.empty();
   });
 });

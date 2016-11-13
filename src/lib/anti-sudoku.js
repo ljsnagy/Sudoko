@@ -33,9 +33,10 @@ export class AntiSudoku {
    * @param {number} num - Number to insert.
    * @param {number} row - Row to insert (0 - 8).
    * @param {number} col - Column to insert (0 - 8).
+   * @param {boolean} nextPlayer - Should the game swap the player afterwards?
    * @returns {boolean} Indicates if the move was legal.
    */
-  placeNumber(num, row, col) {
+  placeNumber(num, row, col, nextPlayer = true) {
     // number must be between 1 and 9
     if (num < 1 || num > 9) return false;
 
@@ -64,7 +65,7 @@ export class AntiSudoku {
     this.grid[row][col] = {player: this.currentPlayer, value: num};
 
     // move is finished
-    this.nextPlayer();
+    if (nextPlayer) this.nextPlayer();
 
     return true;
   }
@@ -73,9 +74,10 @@ export class AntiSudoku {
    * Validates and removes a number from the grid.
    * @param {number} row - Row to remove (0 - 8).
    * @param {number} col - Column to remove (0 - 8).
+   * @param {boolean} nextPlayer - Should the game swap the player afterwards?
    * @returns {boolean} Indicates if the move was legal.
    */
-  removeNumber(row, col) {
+  removeNumber(row, col, nextPlayer = true) {
     // cannot remove empty cell
     if (!this.grid[row][col].value) return false;
 
@@ -89,8 +91,46 @@ export class AntiSudoku {
     this.grid[row][col] = {};
 
     // move is finished
-    this.nextPlayer();
+    if (nextPlayer) this.nextPlayer();
 
     return true;
+  }
+
+  /**
+   * Moves a number to the same row, column or nonet.
+   * @param {number} srcRow - Row to move number from.
+   * @param {number} srcCol - Column to move number from.
+   * @param {number} dstRow - Row to move number to.
+   * @param {number} dstCol - Column to move number to.
+   * @param {boolean} nextPlayer - Should the game swap the player afterwards?
+   * @returns {boolean} Indicates if the move was legal.
+   */
+  moveNumber(srcRow, srcCol, dstRow, dstCol, nextPlayer = true) {
+    // can't move to the same cell
+    if (srcRow === dstRow && srcCol === dstCol) return false;
+
+    var inRow = srcRow === dstRow;
+    var inCol = srcCol === dstCol;
+    var inNonet = Math.floor(srcCol / 3) === Math.floor(dstCol / 3)
+      && Math.floor(srcRow / 3) === Math.floor(dstRow / 3);
+
+    // destination must be in same row column or nonet
+    if (!inRow && !inCol && !inNonet) return false;
+
+    // store the number the player want's to move
+    var cellToMove = this.grid[srcRow][srcCol];
+
+    // attempt to remove the number from the cell
+    if (!this.removeNumber(srcRow, srcCol, false)) return false;
+
+    // attempt to place the removed number into the cell
+    if (this.placeNumber(cellToMove.value, dstRow, dstCol, nextPlayer)) {
+      return true;
+    } else {
+      // revert the move if it fails
+      this.grid[srcRow][srcCol] = cellToMove;
+      this.removedNumbers[srcRow][srcCol] = null;
+      return false;
+    }
   }
 }
