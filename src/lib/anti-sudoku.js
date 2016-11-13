@@ -16,16 +16,49 @@ var constructGrid = function(placeholder) {
 
 /** Represents an Anti Sudoku game. */
 export class AntiSudoku {
-  /** Set up new game. */
-  constructor() {
+  /**
+   * Set up new game.
+   * @param {function} onComplete - Called when game is won and is passed the winning player.
+   */
+  constructor(onComplete = () => {}) {
     this.grid = constructGrid({});
     this.removedNumbers = constructGrid(null);
     this.currentPlayer = 1;
+    this.onComplete = onComplete;
   }
 
   /** Swaps the current player. */
   nextPlayer() {
     this.currentPlayer = (this.currentPlayer % 2) + 1;
+  }
+
+  /**
+   * Checks if the game is won and calls the callback if so.
+   * @param {number} row - Row regarding the previous move.
+   * @param {number} col - Column regarding previous move.
+   */
+  checkWin(row, col) {
+    // optimistic vars
+    var hasRow = true;
+    var hasColumn = true;
+    var hasNonet = true;
+
+    // check if the row or column is complete
+    for (let i = 0; i < 9; i++) {
+      if (!this.grid[row][i].value) hasRow = false;
+      if (!this.grid[i][col].value) hasColumn = false;
+    }
+
+    // check if the nonet is complete
+    var rowOffset = Math.floor(row / 3) * 3;
+    var colOffset = Math.floor(col / 3) * 3;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (!this.grid[rowOffset + i][colOffset + j].value) hasNonet = false;
+      }
+    }
+
+    if (hasRow || hasColumn || hasNonet) this.onComplete(this.currentPlayer);
   }
 
   /**
@@ -63,6 +96,8 @@ export class AntiSudoku {
 
     // add to the grid
     this.grid[row][col] = {player: this.currentPlayer, value: num};
+
+    this.checkWin(row, col);
 
     // move is finished
     if (nextPlayer) this.nextPlayer();

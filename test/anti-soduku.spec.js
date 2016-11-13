@@ -194,4 +194,37 @@ describe('Anti Sudoku', () => {
     game.grid[0][0].should.match({value: 1});
     game.grid[0][8].should.be.empty();
   });
+
+  it('should call the callback when I complete a row', (done) => {
+    game = new AntiSudoku((player) => {
+      player.should.be.exactly(1);
+      done();
+    });
+    for (let i = 0; i < 9; i++) {
+      game.placeNumber(i + 1, 0, i);
+    }
+  });
+
+  it('should call the callback when I complete a column', (done) => {
+    game = new AntiSudoku((player) => {
+      player.should.be.exactly(1);
+      done();
+    });
+    for (let i = 0; i < 9; i++) {
+      game.placeNumber(i + 1, i, 0);
+    }
+  });
+
+  it('should call the callback when I complete a nonet', (done) => {
+    game = new AntiSudoku((player) => {
+      player.should.be.exactly(1);
+      done();
+    });
+    var val = 1;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        game.placeNumber(val++, i, j);
+      }
+    }
+  });
 });
