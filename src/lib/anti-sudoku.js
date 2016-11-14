@@ -3,7 +3,7 @@
  * @param {*} placeholder - initial value
  * @returns {Array}
  */
-var constructGrid = function(placeholder) {
+var constructGrid = function constructGrid(placeholder) {
   var grid = [];
   for (let i = 0; i < 9; i++) {
     grid[i] = [];
@@ -12,6 +12,16 @@ var constructGrid = function(placeholder) {
     }
   }
   return grid;
+};
+
+/**
+ * Checks if the provided row and column are within the boundaries.
+ * @param {number} row
+ * @param {number} col
+ * @returns {boolean}
+ */
+var validateGrid = function validateGrid(row, col) {
+  return (row < 9 && col < 9) && (row >= 0 && col >= 0);
 };
 
 /** Represents an Anti Sudoku game. */
@@ -73,6 +83,8 @@ export class AntiSudoku {
     // number must be between 1 and 9
     if (num < 1 || num > 9) return false;
 
+    if (!validateGrid(row, col)) return false;
+
     // cannot place another number on occupied cell
     if (!!this.grid[row][col].value) return false;
 
@@ -113,6 +125,8 @@ export class AntiSudoku {
    * @returns {boolean} Indicates if the move was legal.
    */
   removeNumber(row, col, nextPlayer = true) {
+    if (!validateGrid(row, col)) return false;
+
     // cannot remove empty cell
     if (!this.grid[row][col].value) return false;
 

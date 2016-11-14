@@ -30,6 +30,13 @@ describe('Anti Sudoku', () => {
     game.grid[0][0].should.be.empty();
   });
 
+  it('should not try to place in a cell that is out of bounds', () => {
+    game.placeNumber(1, -1, 0).should.return.false();
+    game.placeNumber(1, 0, -1).should.return.false();
+    game.placeNumber(1, 9, 0).should.return.false();
+    game.placeNumber(1, 0, 9).should.return.false();
+  });
+
   it('should only allow me to place a number if the cell is not empty', () => {
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
@@ -87,6 +94,11 @@ describe('Anti Sudoku', () => {
     game.placeNumber(1, 0, 0, false);
     game.removeNumber(0, 0).should.return.true();
     game.grid[0][0].should.be.empty();
+  });
+
+  it('should not try to remove an empty number', () => {
+    game.removeNumber(1, 0, 0).should.return.false();
+    game.placeNumber(1, 0, 0).should.return.true();
   });
 
   it('should not allow me to remove another player\'s number', () => {
@@ -172,6 +184,15 @@ describe('Anti Sudoku', () => {
   it('should not allow me to move an empty cell', () => {
     game.moveNumber(0, 0, 1, 0).should.return.false();
     game.grid[1][0].should.be.empty();
+  });
+
+  it('should not try to move a cell that is out of bounds', () => {
+    game.placeNumber(1, 0, 0, false);
+    game.moveNumber(0, 0, -1, 0).should.return.false();
+    game.moveNumber(0, 0, 0, -1).should.return.false();
+    game.moveNumber(0, 0, 9, 0).should.return.false();
+    game.moveNumber(0, 0, 0, 9).should.return.false();
+    game.grid[0][0].should.match({value: 1});
   });
 
   it('should not allow me to move my number to another number', () => {
