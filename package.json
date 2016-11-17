@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "start": "node dist/server/index.js",
     "test": "mocha --compilers js:babel-register"
   },
   "author": "Luke Nagy <lukejsnagy@gmail.com>",
@@ -14,7 +15,15 @@
   "devDependencies": {
     "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "babel-register": "^6.18.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-plumber": "^1.1.0",
+    "gulp-util": "^3.0.7",
     "mocha": "^3.1.2",
     "should": "^11.1.1"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "socket.io": "^1.5.1"
   }
 }
