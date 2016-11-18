@@ -9,4 +9,15 @@ server.listen(3000);
 
 io.on('connection', (socket) => {
   manager.registerPlayer(socket.id, socket);
+
+  socket.on('placeNumber', (args) => {
+    if (manager.placeNumber(socket.id, args)) {
+      socket.to(manager.getRoomId(socket.id)).emit('numberPlaced', args);
+    }
+  });
+});
+
+manager.on('playerAssigned', (roomId, socket) => {
+  socket.join(roomId);
+  socket.emit('assignedRoom');
 });

@@ -72,6 +72,14 @@ export class AntiSudoku {
   }
 
   /**
+   * Returns the current player.
+   * @returns {number}
+   */
+  getPlayer() {
+    return this.currentPlayer;
+  }
+
+  /**
    * Validates and inserts a number into the grid.
    * @param {number} num - Number to insert.
    * @param {number} row - Row to insert (0 - 8).
