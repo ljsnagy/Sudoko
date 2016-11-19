@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "start": "node dist/server/index.js",
+    "start": "node dist/server/app.js",
     "test": "mocha --compilers js:babel-register"
   },
   "author": "Luke Nagy <lukejsnagy@gmail.com>",
