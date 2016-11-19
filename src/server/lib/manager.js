@@ -14,6 +14,33 @@ class Manager extends EventEmitter {
   }
 
   /**
+   * Returns the game for the current room player is in.
+   * @param {string} playerId
+   * @returns {AntiSudoku} - Game instance.
+   * @private
+   */
+  _getGameRoom(playerId) {
+    return this._gameRooms.get(this.getRoomId(playerId));
+  }
+
+  /**
+   * Determines if player is able to make a move (in an active game and it's their turn).
+   * @param {string} playerId
+   * @returns {boolean}
+   * @private
+   */
+  _validatePlayer(playerId) {
+    var player = this._players.get(playerId);
+    var game = this._gameRooms.get(player.roomId);
+
+    // check if player is in active game
+    if (!game) return false;
+
+    // check if the player should be making the move
+    return game.getPlayer() === player.number;
+  }
+
+  /**
    * Returns the room player is currently in.
    * @param {string} playerId
    * @returns {*} - Room ID or false if not in one.
@@ -62,17 +89,21 @@ class Manager extends EventEmitter {
    * @returns {boolean} - Whether the move was successful.
    */
   placeNumber(playerId, {num, row, col} = {}) {
-    var player = this._players.get(playerId);
-    var game = this._gameRooms.get(player.roomId);
-
-    // check if player is in active game
-    if (!game) return false;
-
-    // check if the player should be making the move
-    if (game.getPlayer() !== player.number) return false;
-
-    // attempt to make the move and return the result
+    if (!this._validatePlayer(playerId)) return false;
+    var game = this._getGameRoom(playerId);
     return game.placeNumber(num, row, col);
+  }
+
+  /**
+   * Removes a number for the given player.
+   * @param {string} playerId - ID of the player making the move.
+   * @param {{row: (number), col: (number)}} args - Arguments to removeNumber method.
+   * @returns {boolean} - Whether the move was successful.
+   */
+  removeNumber(playerId, {row, col} = {}) {
+    if (!this._validatePlayer(playerId)) return false;
+    var game = this._getGameRoom(playerId);
+    return game.removeNumber(row, col);
   }
 }
 
