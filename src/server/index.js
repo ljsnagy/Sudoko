@@ -21,6 +21,10 @@ io.on('connection', (socket) => {
   socket.on('removeNumber', (args) => {
     if (manager.removeNumber(socket.id, args)) broadcastToRoom('numberRemoved', args);
   });
+
+  socket.on('moveNumber', (args) => {
+    if (manager.moveNumber(socket.id, args)) broadcastToRoom('numberMoved', args);
+  });
 });
 
 manager.on('playerAssigned', (roomId, socket) => {

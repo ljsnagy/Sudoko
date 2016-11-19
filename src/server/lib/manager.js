@@ -105,6 +105,18 @@ class Manager extends EventEmitter {
     var game = this._getGameRoom(playerId);
     return game.removeNumber(row, col);
   }
+
+  /**
+   * Moves a number for the given player.
+   * @param {string} playerId - ID of the player making the move.
+   * @param {{srcRow: (number), srcCol: (number), dstRow: (number), dstCol: (number)}} args - Arguments to moveNumber method.
+   * @returns {boolean} - Whether the move was successful.
+   */
+  moveNumber(playerId, {srcRow, srcCol, dstRow, dstCol} = {}) {
+    if (!this._validatePlayer(playerId)) return false;
+    var game = this._getGameRoom(playerId);
+    return game.moveNumber(srcRow, srcCol, dstRow, dstCol);
+  }
 }
 
 module.exports = new Manager();
