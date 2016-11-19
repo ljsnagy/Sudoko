@@ -24,6 +24,23 @@ class Manager extends EventEmitter {
   }
 
   /**
+   * Returns all the players in a room.
+   * @param {string} roomId
+   * @returns {Array} - Player IDs.
+   * @private
+   */
+  _getPlayersInRoom(roomId) {
+    var playerIds = [];
+
+    // loop through all players to find the appropriate room
+    // TODO: maybe store players in the room to increase efficiency
+    this._players.forEach(function (player, playerId) {
+      if (player.roomId === roomId) this.push(playerId);
+    }, playerIds);
+    return playerIds;
+  }
+
+  /**
    * Determines if player is able to make a move (in an active game and it's their turn).
    * @param {string} playerId
    * @returns {boolean}
@@ -57,7 +74,7 @@ class Manager extends EventEmitter {
    * @param {Object} data - Any arbitrary data associated with the player.
    */
   registerPlayer(playerId, data) {
-    this._players.set(playerId, {data, roomId: null});
+    this._players.set(playerId, {data, roomId: null, number: null});
     this._waitingPlayers.add(playerId);
 
     // if we've got 2 players waiting time to match them into a room
@@ -79,6 +96,34 @@ class Manager extends EventEmitter {
         this.emit('playerAssigned', roomId, player.data);
       });
       this._waitingPlayers.clear();
+    }
+  }
+
+  /**
+   * Removes a player a manages the appropriate teardown.
+   * @param {string} playerId
+   */
+  deRegisterPlayer(playerId) {
+    // remove player from waiting list (if it was in it)
+    this._waitingPlayers.delete(playerId);
+
+    // see if they were in a room
+    var roomId = this.getRoomId(playerId);
+    if (!!roomId) {
+      // destroy the room
+      this._gameRooms.delete(roomId);
+
+      // go through and remove every player that was in the room
+      // TODO: implement a better system as this 'nuclear' approach may be annoying
+      this._getPlayersInRoom(roomId).forEach((roomPlayerId) => {
+        var player = this._players.get(roomPlayerId);
+        this._players.delete(roomPlayerId);
+        this.emit('playerKicked', roomId, player.data);
+      });
+      this.emit('roomDestroyed', roomId);
+    } else {
+      // not in a room - just delete the player
+      this._players.delete(playerId);
     }
   }
 
