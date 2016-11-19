@@ -10,6 +10,12 @@ describe('Anti Sudoku', () => {
     game = new AntiSudoku();
   });
 
+  it('should return the current player', () => {
+    game.getPlayer().should.return.exactly(1);
+    game.placeNumber(1, 0, 0);
+    game.getPlayer().should.return.exactly(2);
+  });
+
   it('should allow me to place a legal number in every cell', () => {
     var val = 1;
     for (let row = 0; row < 9; row++) {
