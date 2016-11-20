@@ -21,7 +21,12 @@ gulp.task('lib', function () {
     .pipe(gulp.dest(distDir));
 });
 
-gulp.task('build', ['server', 'lib']);
+gulp.task('client', function () {
+  return gulp.src('src/client/**/*.html', { base: 'src' })
+    .pipe(gulp.dest(distDir));
+});
+
+gulp.task('build', ['server', 'lib', 'client']);
 
 gulp.task('watch', ['build'], function () {
   gulp.watch('src/**/*.js', ['build']).on('change', function (event) {

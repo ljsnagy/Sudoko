@@ -2,10 +2,24 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var path = require('path');
 
 var manager = require('./lib/manager.js');
 
 server.listen(3000);
+
+/* --- express --- */
+app.get('/', (req, res) => {
+  res.sendFile('app.html', { root: path.join(__dirname, '../client') });
+});
+
+// serve files from client and lib directory
+app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, '../lib')));
+
+// redirect to index on 404
+app.use((req, res) => res.redirect('/'));
+
 
 /* --- socket events --- */
 io.on('connection', (socket) => {
@@ -36,6 +50,7 @@ io.on('connection', (socket) => {
     manager.deRegisterPlayer(socket.id);
   });
 });
+
 
 /* --- manager events --- */
 manager.on('playerAssigned', (roomId, socket) => {
