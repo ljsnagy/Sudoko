@@ -1,16 +1,19 @@
 .input-controller {
     width: 450px;
+    height: calc((450px / 9) - 4px);
     margin-bottom: 12px;
-    line-height: calc((450px / 9) - 8px);
     font-size: 28px;
     text-align: center;
 }
 
 .input-controller > .input-option {
     box-sizing: border-box;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin: 0 2px;
     width: calc((100% / 9) - 4px);
+    height: 100%;
     border: 2px solid #444;
     border-radius: 8px;
     cursor: pointer;

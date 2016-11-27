@@ -14,8 +14,9 @@ export default class InputController {
 
   /**
    * Displays the controls to insert a number.
+   * @param {function} callback - Called with the number selected.
    */
-  insert() {
+  insert(callback) {
     // clear any previous controls first
     this._$container.children().remove();
 
@@ -24,9 +25,7 @@ export default class InputController {
       let $opt = $(`<div class="input-option">${num}</div>`);
 
       // click handler for the option
-      $opt.on('click', () => {
-        console.log(num);
-      });
+      $opt.on('click', () => callback(num));
 
       this._$container.append($opt);
     }

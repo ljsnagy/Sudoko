@@ -24,6 +24,9 @@ export default class GameGrid {
         // make our cell divs
         let $cell = $('<div/>', { class:'grid-cell' });
 
+        // click handler
+        $cell.on('click', (event) => this._selectCell(event));
+
         // keep track of what row and column the cell belongs to
         $cell.data('row', row).data('col', col);
 
@@ -31,5 +34,23 @@ export default class GameGrid {
         $row.append($cell);
       }
     }
+  }
+
+  /**
+   * Handles the click on a grid cell.
+   * @param {object} event - Event object.
+   * @private
+   */
+  _selectCell(event) {
+    // remove selected class from any previously selected cell
+    this._$container.find('.grid-cell').removeClass('selected');
+
+    // add the sleected class to cell that was clicked
+    $(event.target).addClass('selected');
+
+    // prompt an input from user
+    this._controller.insert((number) => {
+      $(event.target).text(number);
+    });
   }
 }
