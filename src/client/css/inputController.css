@@ -1,0 +1,17 @@
+.input-controller {
+    width: 450px;
+    margin-bottom: 12px;
+    line-height: calc((450px / 9) - 8px);
+    font-size: 28px;
+    text-align: center;
+}
+
+.input-controller > .input-option {
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 0 2px;
+    width: calc((100% / 9) - 4px);
+    border: 2px solid #444;
+    border-radius: 8px;
+    cursor: pointer;
+}

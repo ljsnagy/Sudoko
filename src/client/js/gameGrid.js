@@ -7,16 +7,18 @@ export default class GameGrid {
   /**
    * Construct a new grid.
    * @param {node} container - DOM element to insert the grid into.
+   * @param {InputController} controller - Input controller instance.
    */
-  constructor(container) {
-    var $container = $(container).addClass('grid-container');
+  constructor(container, controller) {
+    this._$container = $(container).addClass('grid-container');
+    this._controller = controller;
 
     for (let row = 0; row < 9; row++) {
       // make our row divs
       let $row = $('<div/>', { class:'grid-row' });
 
       // insert into the container
-      $container.append($row);
+      this._$container.append($row);
 
       for (let col = 0; col < 9; col++) {
         // make our cell divs
