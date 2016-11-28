@@ -1,5 +1,5 @@
 var EventEmitter = require('events');
-var {AntiSudoku} = require('../../lib/anti-sudoku.js');
+var { default: AntiSudoku } = require('../../lib/anti-sudoku.js');
 
 /**
  * Sorts players into rooms and manages each game.
