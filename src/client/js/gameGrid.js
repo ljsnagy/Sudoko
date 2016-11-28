@@ -1,4 +1,5 @@
 import $ from 'zepto';
+import AntiSudoku from '../../lib/anti-sudoku.js';
 
 /**
  * Manages display of the game state.
@@ -10,8 +11,9 @@ export default class GameGrid {
    * @param {InputController} controller - Input controller instance.
    */
   constructor(container, controller) {
-    this._$container = $(container).addClass('grid-container');
     this._controller = controller;
+    this._game = new AntiSudoku();
+    this._$container = $(container).addClass('grid-container');
 
     for (let row = 0; row < 9; row++) {
       // make our row divs
@@ -42,15 +44,26 @@ export default class GameGrid {
    * @private
    */
   _selectCell(event) {
+    var $cell = $(event.target);
+    var row = $cell.data('row');
+    var col = $cell.data('col');
+
     // remove selected class from any previously selected cell
     this._$container.find('.grid-cell').removeClass('selected');
 
     // add the sleected class to cell that was clicked
-    $(event.target).addClass('selected');
+    $cell.addClass('selected');
+
+    // find out what numbers we can place
+    var legalNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) => {
+      return this._game.placeNumber(num, row, col, false, true);
+    });
 
     // prompt an input from user
-    this._controller.insert((number) => {
-      $(event.target).text(number);
+    this._controller.insert(legalNumbers, (num) => {
+      if (this._game.placeNumber(num, row, col)) {
+        $cell.text(num);
+      }
     });
   }
 }

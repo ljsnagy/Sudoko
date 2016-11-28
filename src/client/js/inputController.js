@@ -14,20 +14,21 @@ export default class InputController {
 
   /**
    * Displays the controls to insert a number.
+   * @param {[number]} numbers - Array of numbers to display.
    * @param {function} callback - Called with the number selected.
    */
-  insert(callback) {
+  insert(numbers, callback) {
     // clear any previous controls first
     this._$container.children().remove();
 
     // display our number options
-    for (let num = 1; num <= 9; num++) {
-      let $opt = $(`<div class="input-option">${num}</div>`);
+    numbers.forEach((num) => {
+      var $opt = $(`<div class="input-option">${num}</div>`);
 
       // click handler for the option
       $opt.on('click', () => callback(num));
 
       this._$container.append($opt);
-    }
+    });
   }
 }
