@@ -39,6 +39,14 @@
     border-left-width: 2px;
 }
 
+/* grid cell states */
 .grid-container > .grid-row > .grid-cell.selected {
+    position: relative;
     box-shadow: 0 0 2px 3px #777;
+}
+.grid-container > .grid-row > .grid-cell.highlighted {
+    background-color: #DDD;
+}
+.grid-container > .grid-row > .grid-cell.removed {
+    color: #777;
 }

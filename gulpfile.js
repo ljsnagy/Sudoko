@@ -22,18 +22,14 @@ gulp.task('server', function () {
 gulp.task('lib', function () {
   return gulp.src('src/lib/**/*.js', { base: 'src' })
     .pipe(plumber({errorHandler: handler}))
-    .pipe(babel({
-      plugins: ['transform-es2015-modules-commonjs']
-    }))
+    .pipe(babel())
     .pipe(gulp.dest(distDir));
 });
 
 gulp.task('client-js', function () {
   var b = browserify({ debug: true })
     .add('src/client/js/app.js')
-    .transform(require('babelify'), {
-      presets: ['es2015']
-    })
+    .transform(require('babelify'))
     .transform(require('browserify-shim'));
 
   return b.bundle().on('error', handler)

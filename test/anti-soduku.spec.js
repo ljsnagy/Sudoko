@@ -20,7 +20,7 @@ describe('Anti Sudoku', () => {
       for (let col = 0; col < 9; col++) {
         if (val > 9) val = 1;
         game.placeNumber(val, row, col).should.return.true();
-        game._grid[row][col].should.match({value: val});
+        game.getCell(row, col).should.match({value: val});
         val++;
       }
       val = ((3 * ((row + 1) % 3)) + 1) + Math.floor((row + 1) / 3);
@@ -29,9 +29,9 @@ describe('Anti Sudoku', () => {
 
   it('should only allow me to place 1 to 9', () => {
     game.placeNumber(0, 0, 0).should.return.false();
-    game._grid[0][0].should.be.empty();
+    game.getCell(0, 0).should.be.empty();
     game.placeNumber(10, 0, 0).should.return.false();
-    game._grid[0][0].should.be.empty();
+    game.getCell(0, 0).should.be.empty();
   });
 
   it('should not try to place in a cell that is out of bounds', () => {
@@ -46,7 +46,7 @@ describe('Anti Sudoku', () => {
       for (let col = 0; col < 9; col++) {
         game.placeNumber(1, row, col).should.return.true();
         game.placeNumber(2, row, col).should.return.false();
-        game._grid[row][col].should.match({value: 1});
+        game.getCell(row, col).should.match({value: 1});
         game = new AntiSudoku();
       }
     }
@@ -58,7 +58,7 @@ describe('Anti Sudoku', () => {
       game.placeNumber(val, row, 0);
       for (let col = 1; col < 9; col++) {
         game.placeNumber(val, row, col);
-        game._grid[row][col].should.be.empty();
+        game.getCell(row, col).should.be.empty();
       }
       game = new AntiSudoku();
     }
@@ -70,7 +70,7 @@ describe('Anti Sudoku', () => {
       game.placeNumber(val, 0, col);
       for (let row = 1; row < 9; row++) {
         game.placeNumber(val, row, col);
-        game._grid[row][col].should.be.empty();
+        game.getCell(row, col).should.be.empty();
       }
       game = new AntiSudoku();
     }
@@ -85,7 +85,7 @@ describe('Anti Sudoku', () => {
           for (let j = 0; j < 3; j++) {
             if (i + j !== 0) {
               game.placeNumber(val, row + i, col + j).should.return.false();
-              game._grid[row + i][col + j].should.be.empty();
+              game.getCell(row + i, col + j).should.be.empty();
             }
           }
         }
@@ -97,7 +97,7 @@ describe('Anti Sudoku', () => {
   it('should allow me to remove my number', () => {
     game.placeNumber(1, 0, 0, false);
     game.removeNumber(0, 0).should.return.true();
-    game._grid[0][0].should.be.empty();
+    game.getCell(0, 0).should.be.empty();
   });
 
   it('should not try to remove an empty number', () => {
@@ -108,14 +108,14 @@ describe('Anti Sudoku', () => {
   it('should not allow me to remove another player\'s number', () => {
     game.placeNumber(1, 0, 0);
     game.removeNumber(0, 0).should.return.false();
-    game._grid[0][0].should.not.be.empty();
+    game.getCell(0, 0).should.not.be.empty();
   });
 
   it('should not allow me to place the last removed number on the same cell', () => {
     game.placeNumber(1, 0, 0, false);
     game.removeNumber(0, 0);
     game.placeNumber(1, 0, 0).should.return.false();
-    game._grid[0][0].should.be.empty();
+    game.getCell(0, 0).should.be.empty();
   });
 
   it('should allow me to move my number to the same row', () => {
@@ -124,8 +124,8 @@ describe('Anti Sudoku', () => {
       for (let col = 1; col < 9; col++) {
         game.placeNumber(val, row, 0, false);
         game.moveNumber(row, 0, row, col).should.return.true();
-        game._grid[row][col].should.match({value: val});
-        game._grid[row][0].should.be.empty();
+        game.getCell(row, col).should.match({value: val});
+        game.getCell(row, 0).should.be.empty();
         game = new AntiSudoku();
       }
     }
@@ -137,8 +137,8 @@ describe('Anti Sudoku', () => {
       for (let row = 1; row < 9; row++) {
         game.placeNumber(val, 0, col, false);
         game.moveNumber(0, col, row, col).should.return.true();
-        game._grid[row][col].should.match({value: val});
-        game._grid[0][col].should.be.empty();
+        game.getCell(row, col).should.match({value: val});
+        game.getCell(0, col).should.be.empty();
         game = new AntiSudoku();
       }
     }
@@ -153,8 +153,8 @@ describe('Anti Sudoku', () => {
             game.placeNumber(val, row, col, false);
             if (i + j !== 0) {
               game.moveNumber(row, col, row + i, col + j).should.return.true();
-              game._grid[row + i][col + j].should.match({value: val});
-              game._grid[row][col].should.be.empty();
+              game.getCell(row + i, col + j).should.match({value: val});
+              game.getCell(row, col).should.be.empty();
             }
             game = new AntiSudoku();
           }
@@ -170,8 +170,8 @@ describe('Anti Sudoku', () => {
         game.placeNumber(val, 0, 0, false);
         if (row !== 0 && col !== 0 && (Math.floor(row / 3) !== 0 && Math.floor(col / 3) !== 0)) {
           game.moveNumber(0, 0, row, col).should.return.false();
-          game._grid[0][0].should.match({value: val});
-          game._grid[row][col].should.be.empty();
+          game.getCell(0, 0).should.match({value: val});
+          game.getCell(row, col).should.be.empty();
         }
         game = new AntiSudoku();
       }
@@ -181,13 +181,13 @@ describe('Anti Sudoku', () => {
   it('should not allow me to move another player\'s number', () => {
     game.placeNumber(1, 0, 0);
     game.moveNumber(0, 0, 1, 0).should.return.false();
-    game._grid[0][0].should.match({value: 1});
-    game._grid[1][0].should.be.empty();
+    game.getCell(0, 0).should.match({value: 1});
+    game.getCell(1, 0).should.be.empty();
   });
 
   it('should not allow me to move an empty cell', () => {
     game.moveNumber(0, 0, 1, 0).should.return.false();
-    game._grid[1][0].should.be.empty();
+    game.getCell(1, 0).should.be.empty();
   });
 
   it('should not try to move a cell that is out of bounds', () => {
@@ -196,15 +196,15 @@ describe('Anti Sudoku', () => {
     game.moveNumber(0, 0, 0, -1).should.return.false();
     game.moveNumber(0, 0, 9, 0).should.return.false();
     game.moveNumber(0, 0, 0, 9).should.return.false();
-    game._grid[0][0].should.match({value: 1});
+    game.getCell(0, 0).should.match({value: 1});
   });
 
   it('should not allow me to move my number to another number', () => {
     game.placeNumber(1, 0, 0);
     game.placeNumber(2, 1, 0);
     game.moveNumber(0, 0, 1, 0).should.return.false();
-    game._grid[0][0].should.match({value: 1});
-    game._grid[1][0].should.match({value: 2});
+    game.getCell(0, 0).should.match({value: 1});
+    game.getCell(1, 0).should.match({value: 2});
   });
 
   it('should not allow me to move my number to an illegal position', () => {
@@ -212,12 +212,12 @@ describe('Anti Sudoku', () => {
     game.placeNumber(1, 8, 8);
 
     game.moveNumber(0, 0, 8, 0).should.return.false();
-    game._grid[0][0].should.match({value: 1});
-    game._grid[8][0].should.be.empty();
+    game.getCell(0, 0).should.match({value: 1});
+    game.getCell(8, 0).should.be.empty();
 
     game.moveNumber(0, 0, 0, 8).should.return.false();
-    game._grid[0][0].should.match({value: 1});
-    game._grid[0][8].should.be.empty();
+    game.getCell(0, 0).should.match({value: 1});
+    game.getCell(0, 8).should.be.empty();
   });
 
   it('should call the callback when I complete a row', (done) => {

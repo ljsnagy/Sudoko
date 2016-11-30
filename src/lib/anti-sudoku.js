@@ -84,6 +84,18 @@ export default class AntiSudoku {
   }
 
   /**
+   * Returns the cell at the given row and column.
+   * @param {number} row
+   * @param {number} col
+   * @returns {object|boolean} - Object containing cell value and player or false if invalid row/column.
+   */
+  getCell(row, col) {
+    if (!validateGrid(row, col)) return false;
+
+    return { ...this._grid[row][col] };
+  }
+
+  /**
    * Validates and inserts a number into the grid.
    * @param {number} num - Number to insert.
    * @param {number} row - Row to insert (0 - 8).
@@ -137,9 +149,10 @@ export default class AntiSudoku {
    * @param {number} row - Row to remove (0 - 8).
    * @param {number} col - Column to remove (0 - 8).
    * @param {boolean} nextPlayer - Should the game swap the player afterwards?
+   * @param {boolean} dryRun - Allows testing if the move would succeed without performing it.
    * @returns {boolean} Indicates if the move was legal.
    */
-  removeNumber(row, col, nextPlayer = true) {
+  removeNumber(row, col, nextPlayer = true, dryRun = false) {
     if (!validateGrid(row, col)) return false;
 
     // cannot remove empty cell
@@ -148,11 +161,13 @@ export default class AntiSudoku {
     // cannot remove number player doesn't own
     if (this._grid[row][col].player !== this._currentPlayer) return false;
 
-    // record the removed number
-    this._removedNumbers[row][col] = this._grid[row][col].value;
+    if (!dryRun) {
+      // record the removed number
+      this._removedNumbers[row][col] = this._grid[row][col].value;
 
-    // remove the entry
-    this._grid[row][col] = {};
+      // remove the entry
+      this._grid[row][col] = {};
+    }
 
     // move is finished
     if (nextPlayer) this._nextPlayer();
@@ -167,9 +182,10 @@ export default class AntiSudoku {
    * @param {number} dstRow - Row to move number to.
    * @param {number} dstCol - Column to move number to.
    * @param {boolean} nextPlayer - Should the game swap the player afterwards?
+   * @param {boolean} dryRun - Allows testing if the move would succeed without performing it.
    * @returns {boolean} Indicates if the move was legal.
    */
-  moveNumber(srcRow, srcCol, dstRow, dstCol, nextPlayer = true) {
+  moveNumber(srcRow, srcCol, dstRow, dstCol, nextPlayer = true, dryRun = false) {
     // can't move to the same cell
     if (srcRow === dstRow && srcCol === dstCol) return false;
 
@@ -188,13 +204,14 @@ export default class AntiSudoku {
     if (!this.removeNumber(srcRow, srcCol, false)) return false;
 
     // attempt to place the removed number into the cell
-    if (this.placeNumber(cellToMove.value, dstRow, dstCol, nextPlayer)) {
-      return true;
-    } else {
-      // revert the move if it fails
+    var result = this.placeNumber(cellToMove.value, dstRow, dstCol, nextPlayer, dryRun);
+
+    if (!result || dryRun) {
+      // revert the move if it fails or we're in a dry run
       this._grid[srcRow][srcCol] = cellToMove;
       this._removedNumbers[srcRow][srcCol] = null;
-      return false;
     }
+
+    return result;
   }
 }
