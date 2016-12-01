@@ -53,9 +53,9 @@ io.on('connection', (socket) => {
 
 
 /* --- manager events --- */
-manager.on('playerAssigned', (roomId, socket) => {
+manager.on('playerAssigned', (roomId, playerNum, socket) => {
   socket.join(roomId);
-  socket.emit('assignedRoom');
+  socket.emit('assignedRoom', playerNum);
 });
 
 manager.on('playerKicked', (roomId, socket) => {

@@ -48,6 +48,10 @@ class Manager extends EventEmitter {
    */
   _validatePlayer(playerId) {
     var player = this._players.get(playerId);
+
+    // check if player is registered
+    if (!player) return false;
+
     var game = this._gameRooms.get(player.roomId);
 
     // check if player is in active game
@@ -93,7 +97,7 @@ class Manager extends EventEmitter {
         var player = this._players.get(playerId);
         player.roomId = roomId;
         player.number = currPlayer++;
-        this.emit('playerAssigned', roomId, player.data);
+        this.emit('playerAssigned', roomId, player.number, player.data);
       });
       this._waitingPlayers.clear();
     }

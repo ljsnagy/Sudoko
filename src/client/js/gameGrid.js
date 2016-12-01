@@ -6,19 +6,16 @@ import AntiSudoku from '../../lib/anti-sudoku.js';
  */
 export default class GameGrid {
   /**
-   * Create a new game.
-   * @param {number} player - Assigned player number.
+   * Initialize the game grid.
    * @param {node} container - DOM element to insert the grid into.
    * @param {InputController} controller - Input controller instance.
    */
-  constructor(player, container, controller) {
-    this._player = player;
+  constructor(container, controller) {
     this._$container = $(container).addClass('grid-container');
     this._controller = controller;
     this._game = new AntiSudoku();
 
     this._constructGrid();
-    if (this._player !== 1) this._setWaiting();
   }
 
   /**
@@ -68,11 +65,17 @@ export default class GameGrid {
   }
 
   /**
-   * Displays a waiting message.
+   * Displays the waiting state of the game.
    * @private
    */
   _setWaiting() {
-    this._controller.clear(`Waiting for Player ${this._game.getPlayer()}...`);
+    if (this._player === this._game.getPlayer()) {
+      // our turn
+      this._controller.clear('Your Turn to Move');
+    } else {
+      // other player's turn
+      this._controller.clear(`Waiting for Player ${this._game.getPlayer()}...`);
+    }
   }
 
   /**
@@ -95,19 +98,6 @@ export default class GameGrid {
     // add the selected class to cell that was clicked
     $cellElem.addClass('selected');
 
-    // check if we're selecting a cell to move a number to
-    if (!!this._moveCell) {
-      // grab the row and column for the cell being moved
-      let srcRow = this._moveCell.data('row');
-      let srcCol = this._moveCell.data('col');
-
-      // clear the move cell state
-      this._moveCell = null;
-
-      // move our number
-      this.moveNumber(srcRow, srcCol, row, col);
-    }
-
     if (!cell.value) {
       // find out what numbers we can place
       var legalNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((num) => {
@@ -115,14 +105,14 @@ export default class GameGrid {
       });
 
       // prompt user for number to place
-      this._controller.insert(legalNumbers, (num) => this.placeNumber(num, row, col));
+      this._controller.insert(legalNumbers, (num) => this._placeNumber(num, row, col));
     } else if (cell.player === this._player) {
       // cell has a value and we own it
       // show options to modify the cell
       this._controller.modify((action) => {
         if (action === 'remove') {
           // remove the number
-          this.removeNumber(row, col);
+          this._removeNumber(row, col);
         } else if (action === 'move') {
           // player wants to move - store the cell for the next selection
           this._moveCell = $cellElem;
@@ -143,6 +133,19 @@ export default class GameGrid {
       // clear the controller
       this._controller.clear();
     }
+
+    // check if we're selecting a cell to move a number to
+    if (!!this._moveCell) {
+      // grab the row and column for the cell being moved
+      let srcRow = this._moveCell.data('row');
+      let srcCol = this._moveCell.data('col');
+
+      // clear the move cell state
+      this._moveCell = null;
+
+      // move our number
+      this._moveNumber(srcRow, srcCol, row, col);
+    }
   }
 
   /**
@@ -150,8 +153,10 @@ export default class GameGrid {
    * @param {number} num - Number to insert.
    * @param {number} row - Row to insert at.
    * @param {number} col - Column to insert at.
+   * @param {boolean} emit - Whether to emit the event to the server.
+   * @private
    */
-  placeNumber(num, row, col) {
+  _placeNumber(num, row, col, emit = true) {
     var $cell = this._getCell(row, col);
     var currPlayer = this._game.getPlayer();
 
@@ -163,6 +168,8 @@ export default class GameGrid {
 
       this._clearState();
       this._setWaiting();
+
+      if (emit) this._socket.emit('placeNumber', { num, row, col });
     }
   }
 
@@ -170,8 +177,10 @@ export default class GameGrid {
    * Removes a number from the grid.
    * @param {number} row - Row to remove.
    * @param {number} col - Column to remove.
+   * @param {boolean} emit - Whether to emit the event to the server.
+   * @private
    */
-  removeNumber(row, col) {
+  _removeNumber(row, col, emit = true) {
     var $cell = this._getCell(row, col);
 
     if (this._game.removeNumber(row, col)) {
@@ -179,6 +188,8 @@ export default class GameGrid {
 
       this._clearState();
       this._setWaiting();
+
+      if (emit) this._socket.emit('removeNumber', { row, col });
     }
   }
 
@@ -188,8 +199,10 @@ export default class GameGrid {
    * @param {number} srcCol - Column to move number from.
    * @param {number} dstRow - Row to move number to.
    * @param {number} dstCol - Column to move number to.
+   * @param {boolean} emit - Whether to emit the event to the server.
+   * @private
    */
-  moveNumber(srcRow, srcCol, dstRow, dstCol) {
+  _moveNumber(srcRow, srcCol, dstRow, dstCol, emit = true) {
     var $srcCell = this._getCell(srcRow, srcCol);
     var $dstCell = this._getCell(dstRow, dstCol);
     var currPlayer = this._game.getPlayer();
@@ -200,6 +213,31 @@ export default class GameGrid {
 
       this._clearState();
       this._setWaiting();
+
+      if (emit) this._socket.emit('moveNumber', { srcRow, srcCol, dstRow, dstCol });
     }
+  }
+
+  /**
+   * Create a new game.
+   * @param {number} player - Assigned player number.
+   * @param {socket} socket - SocketIO socket connected to the game server.
+   */
+  newGame(player, socket) {
+    this._player = player;
+    this._socket = socket;
+
+    this._setWaiting();
+
+    // set up game events listeners from the server
+    this._socket.on('numberPlaced', ({ num, row, col }) => {
+      this._placeNumber(num, row, col, false);
+    });
+    this._socket.on('numberRemoved', ({ row, col }) => {
+      this._removeNumber(row, col, false);
+    });
+    this._socket.on('numberMoved', ({ srcRow, srcCol, dstRow, dstCol }) => {
+      this._moveNumber(srcRow, srcCol, dstRow, dstCol, false);
+    });
   }
 }
