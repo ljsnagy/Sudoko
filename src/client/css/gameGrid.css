@@ -50,3 +50,10 @@
 .grid-container > .grid-row > .grid-cell.removed {
     color: #777;
 }
+
+.grid-container > .grid-row > .grid-cell.player-1 {
+    color: red;
+}
+.grid-container > .grid-row > .grid-cell.player-2 {
+    color: blue;
+}

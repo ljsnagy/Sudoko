@@ -18,6 +18,7 @@ export default class GameGrid {
     this._game = new AntiSudoku();
 
     this._constructGrid();
+    if (this._player !== 1) this._setWaiting();
   }
 
   /**
@@ -67,11 +68,21 @@ export default class GameGrid {
   }
 
   /**
+   * Displays a waiting message.
+   * @private
+   */
+  _setWaiting() {
+    this._controller.clear(`Waiting for Player ${this._game.getPlayer()}...`);
+  }
+
+  /**
    * Handles the click on a grid cell.
    * @param {object} event - Event object.
    * @private
    */
   _selectCell(event) {
+    if (this._player !== this._game.getPlayer()) return;
+
     var $cellElem = $(event.target);
 
     var row = $cellElem.data('row');
@@ -95,8 +106,6 @@ export default class GameGrid {
 
       // move our number
       this.moveNumber(srcRow, srcCol, row, col);
-
-      this._clearState();
     }
 
     if (!cell.value) {
@@ -106,11 +115,7 @@ export default class GameGrid {
       });
 
       // prompt user for number to place
-      this._controller.insert(legalNumbers, (num) => {
-        this.placeNumber(num, row, col);
-
-        this._clearState();
-      });
+      this._controller.insert(legalNumbers, (num) => this.placeNumber(num, row, col));
     } else if (cell.player === this._player) {
       // cell has a value and we own it
       // show options to modify the cell
@@ -118,8 +123,6 @@ export default class GameGrid {
         if (action === 'remove') {
           // remove the number
           this.removeNumber(row, col);
-
-          this._clearState();
         } else if (action === 'move') {
           // player wants to move - store the cell for the next selection
           this._moveCell = $cellElem;
@@ -150,9 +153,16 @@ export default class GameGrid {
    */
   placeNumber(num, row, col) {
     var $cell = this._getCell(row, col);
+    var currPlayer = this._game.getPlayer();
 
     if (this._game.placeNumber(num, row, col)) {
-      $cell.removeClass('removed').text(num);
+      $cell
+        .removeClass('removed')
+        .addClass(`player-${currPlayer}`)
+        .text(num);
+
+      this._clearState();
+      this._setWaiting();
     }
   }
 
@@ -165,7 +175,10 @@ export default class GameGrid {
     var $cell = this._getCell(row, col);
 
     if (this._game.removeNumber(row, col)) {
-      $cell.addClass('removed');
+      $cell.removeClass('player-1 player-2').addClass('removed');
+
+      this._clearState();
+      this._setWaiting();
     }
   }
 
@@ -179,10 +192,14 @@ export default class GameGrid {
   moveNumber(srcRow, srcCol, dstRow, dstCol) {
     var $srcCell = this._getCell(srcRow, srcCol);
     var $dstCell = this._getCell(dstRow, dstCol);
+    var currPlayer = this._game.getPlayer();
 
     if (this._game.moveNumber(srcRow, srcCol, dstRow, dstCol)) {
-      $dstCell.text($srcCell.text());
-      $srcCell.addClass('removed');
+      $dstCell.addClass(`player-${currPlayer}`).text($srcCell.text());
+      $srcCell.removeClass('player-1 player-2').addClass('removed');
+
+      this._clearState();
+      this._setWaiting();
     }
   }
 }

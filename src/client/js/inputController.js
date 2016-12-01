@@ -14,9 +14,11 @@ export default class InputController {
 
   /**
    * Clears the controller inputs.
+   * @param {string} msg - Optional message to display.
    */
-  clear() {
+  clear(msg) {
     this._$container.children().remove();
+    if (!!msg) this._$container.append(`<div class="input-msg">${msg}</div>`);
   }
 
   /**
