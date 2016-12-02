@@ -1,4 +1,5 @@
-.input-controller {
+.input-controller
+{
     width: 450px;
     height: calc((450px / 9) - 4px);
     margin-bottom: 12px;
@@ -6,14 +7,16 @@
     text-align: center;
 }
 
-.input-controller > div {
+.input-controller > div
+{
     display: inline-flex;
     justify-content: center;
     align-items: center;
     height: 100%;
 }
 
-.input-controller > .input-option {
+.input-controller > div.input-option
+{
     box-sizing: border-box;
     margin: 0 2px;
     padding: 0.2em;
@@ -22,12 +25,14 @@
     border-radius: 8px;
     cursor: pointer;
 }
-.input-controller > .input-option.remove {
+.input-controller > div.input-option.remove
+{
     color: red;
     border-color: red;
 }
 
-.input-controller > .input-msg {
+.input-controller > .input-msg
+{
     align-items: flex-end;
     font-size: 0.8em;
 }

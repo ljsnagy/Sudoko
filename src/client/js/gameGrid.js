@@ -13,7 +13,6 @@ export default class GameGrid {
   constructor(container, controller) {
     this._$container = $(container).addClass('grid-container');
     this._controller = controller;
-    this._game = new AntiSudoku();
 
     this._constructGrid();
   }
@@ -34,7 +33,7 @@ export default class GameGrid {
         let $cell = $('<div/>', { class:'grid-cell' });
 
         // click handler
-        $cell.on('click', (event) => this._selectCell(event));
+        $cell.on('click', this._selectCell.bind(this));
 
         // keep track of what row and column the cell belongs to
         $cell.data('row', row).data('col', col);
@@ -149,7 +148,7 @@ export default class GameGrid {
   }
 
   /**
-   * Inserts the number into the grid.
+   * Inserts a number into the grid.
    * @param {number} num - Number to insert.
    * @param {number} row - Row to insert at.
    * @param {number} col - Column to insert at.
@@ -219,6 +218,20 @@ export default class GameGrid {
   }
 
   /**
+   * Highlights the row, column or nonet that was captured.
+   * @param {number} player - Player that won.
+   * @param {string} capture - The type of capture ('row', 'column' or 'nonet').
+   * @param {[{row: (number), col: (number)}]} cells - Array of cell coordinates that were captured.
+   * @private
+   */
+  _onWin(player, capture, cells) {
+    cells.forEach((cell) => {
+      var $cell = this._getCell(cell.row, cell.col);
+      $cell.addClass(`captured-${capture} captured-player-${player}`);
+    });
+  }
+
+  /**
    * Create a new game.
    * @param {number} player - Assigned player number.
    * @param {socket} socket - SocketIO socket connected to the game server.
@@ -226,6 +239,7 @@ export default class GameGrid {
   newGame(player, socket) {
     this._player = player;
     this._socket = socket;
+    this._game = new AntiSudoku(this._onWin.bind(this));
 
     this._setWaiting();
 

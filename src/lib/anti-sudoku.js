@@ -28,7 +28,7 @@ var validateGrid = function validateGrid(row, col) {
 export default class AntiSudoku {
   /**
    * Set up new game.
-   * @param {function} onComplete - Called when game is won and is passed the winning player.
+   * @param {function} onComplete - Called when game is won and is passed the winning player and relevant cells.
    */
   constructor(onComplete = () => {}) {
     this._grid = constructGrid({});
@@ -57,10 +57,18 @@ export default class AntiSudoku {
     var hasColumn = true;
     var hasNonet = true;
 
+    // arrays to hold winning cells
+    var rowSet = [];
+    var colSet = [];
+    var nonSet = [];
+
     // check if the row or column is complete
     for (let i = 0; i < 9; i++) {
       if (!this._grid[row][i].value) hasRow = false;
+      else rowSet.push({ row, col: i });
+
       if (!this._grid[i][col].value) hasColumn = false;
+      else colSet.push({ row: i, col });
     }
 
     // check if the nonet is complete
@@ -69,10 +77,17 @@ export default class AntiSudoku {
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
         if (!this._grid[rowOffset + i][colOffset + j].value) hasNonet = false;
+        else nonSet.push({ row: rowOffset + i, col: colOffset + j });
       }
     }
 
-    if (hasRow || hasColumn || hasNonet) this._onComplete(this._currentPlayer);
+    if (hasRow) {
+      this._onComplete(this._currentPlayer, 'row', rowSet);
+    } else if (hasColumn) {
+      this._onComplete(this._currentPlayer, 'column', colSet);
+    } else if (hasNonet) {
+      this._onComplete(this._currentPlayer, 'nonet', nonSet);
+    }
   }
 
   /**
