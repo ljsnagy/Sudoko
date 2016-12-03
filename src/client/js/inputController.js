@@ -6,7 +6,7 @@ import $ from 'zepto';
 export default class InputController {
   /**
    * Construct new input controller.
-   * @param {node} container - DOM element that will contain the controls.
+   * @param {Element} container - DOM element that will contain the controls.
    */
   constructor(container) {
     this._$container = $(container).addClass('input-controller');
@@ -14,7 +14,7 @@ export default class InputController {
 
   /**
    * Clears the controller inputs.
-   * @param {string} msg - Optional message to display.
+   * @param {string} [msg] - Optional message to display.
    */
   clear(msg) {
     this._$container.children().remove();
@@ -23,38 +23,25 @@ export default class InputController {
 
   /**
    * Displays the controls to insert a number.
-   * @param {[number]} numbers - Array of numbers to display.
-   * @param {function} callback - Called with the number selected.
+   * @param {[string]|[{name: (string), class: (string)}]} options - Array of inputs to display.
+   * @param {function} callback - Called with the option selected.
    */
-  insert(numbers, callback) {
+  select(options, callback) {
     // clear any previous controls first
     this.clear();
 
     // display our number options
-    numbers.forEach((num) => {
-      var $opt = $(`<div class="input-option">${num}</div>`);
+    options.forEach((opt) => {
+      var name = opt.name || opt;
+      var $opt = $(`<div class="input-option">${name}</div>`);
+
+      // add custom class if present
+      if (opt.class) $opt.addClass(opt.class);
 
       // click handler for the option
-      $opt.on('click', () => callback(num));
+      $opt.on('click', () => callback(name));
 
       this._$container.append($opt);
     });
-  }
-
-  /**
-   * Displays the controls to modify (remove/move) a number.
-   * @param {function} callback - Called with the action chosen.
-   */
-  modify(callback) {
-    // clear any previous controls first
-    this.clear();
-
-    var $removeOpt = $('<div class="input-option remove">Remove</div>');
-    $removeOpt.on('click', () => callback('remove'));
-
-    var $moveOpt = $('<div class="input-option">Move</div>');
-    $moveOpt.on('click', () => callback('move'));
-
-    this._$container.append([$removeOpt, $moveOpt]);
   }
 }
