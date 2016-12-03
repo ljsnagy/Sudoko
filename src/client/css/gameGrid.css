@@ -1,0 +1,148 @@
+.grid-container
+{
+    box-sizing: border-box;
+    width: 450px;
+    height: 450px;
+    font-size: 28px;
+    border: 3px solid #444;
+    border-radius: 8px;
+}
+
+.grid-container > .grid-row
+{
+    width: 100%;
+    height: calc(100% / 9);
+}
+
+.grid-container > .grid-row > .grid-cell
+{
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: left;
+    width: calc(100% / 9);
+    height: 100%;
+    border: 1px solid #444;
+}
+
+/* vertical third dividers */
+.grid-row:nth-child(3) > .grid-cell,  .grid-row:nth-child(6) > .grid-cell
+{
+    border-bottom-width: 2px;
+}
+.grid-row:nth-child(4) > .grid-cell,  .grid-row:nth-child(7) > .grid-cell
+{
+    border-top-width: 2px;
+}
+
+/* horizontal third dividers */
+.grid-row > .grid-cell:nth-child(3), .grid-row > .grid-cell:nth-child(6)
+{
+    border-right-width: 2px;
+}
+.grid-row > .grid-cell:nth-child(4), .grid-row > .grid-cell:nth-child(7)
+{
+    border-left-width: 2px;
+}
+
+/* grid cell states */
+.grid-container > .grid-row > .grid-cell.selected
+{
+    position: relative;
+    box-shadow: 0 0 2px 3px #777;
+}
+.grid-container > .grid-row > .grid-cell.highlighted
+{
+    background-color: #DDD;
+}
+.grid-container > .grid-row > .grid-cell.removed
+{
+    color: #777;
+}
+
+/* player colours */
+.grid-container > .grid-row > .grid-cell.player-1
+{
+    color: red;
+}
+.grid-container > .grid-row > .grid-cell.player-2
+{
+    color: blue;
+}
+
+/* highlights when a column is captured */
+.grid-container > .grid-row > .grid-cell.captured-column
+{
+    border-width: 0 2px;
+}
+.grid-container > .grid-row:first-child > .grid-cell.captured-column
+{
+    border-top-width: 2px;
+    padding-bottom: 2px;
+}
+.grid-container > .grid-row:nth-child(9) > .grid-cell.captured-column
+{
+    border-bottom-width: 2px;
+    padding-top: 2px;
+}
+
+/* highlights when a row is captured */
+.grid-container > .grid-row > .grid-cell.captured-row
+{
+    border-width: 2px 0;
+}
+.grid-container > .grid-row > .grid-cell.captured-row:first-child
+{
+    border-left-width: 2px;
+    padding-right: 2px;
+}
+.grid-container > .grid-row > .grid-cell.captured-row:nth-child(9)
+{
+    border-right-width: 2px;
+    padding-left: 2px;
+}
+
+/* highlights when a nonet is captured */
+.grid-container > .grid-row > .grid-cell.captured-nonet
+{
+    border-width: 0;
+}
+.grid-container > .grid-row:first-child > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(4) > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(7) > .grid-cell.captured-nonet
+{
+    border-top-width: 2px;
+    padding-bottom: 2px;
+}
+.grid-container > .grid-row:nth-child(3) > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(6) > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(9) > .grid-cell.captured-nonet
+{
+    border-bottom-width: 2px;
+    padding-top: 2px;
+}
+.grid-container > .grid-row > .grid-cell.captured-nonet:first-child,
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(4),
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(7)
+{
+    border-left-width: 2px;
+    padding-right: 2px;
+}
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(3),
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(6),
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(9)
+{
+    border-right-width: 2px;
+    padding-left: 2px;
+}
+
+/* highlight colour for players */
+.grid-container > .grid-row > .grid-cell.captured-player-1
+{
+    border-color: red;
+}
+.grid-container > .grid-row > .grid-cell.captured-player-2
+{
+    border-color: blue;
+}

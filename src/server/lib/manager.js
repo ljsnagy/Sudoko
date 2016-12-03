@@ -1,5 +1,5 @@
 var EventEmitter = require('events');
-var {AntiSudoku} = require('../../lib/anti-sudoku.js');
+var { default: AntiSudoku } = require('../../lib/anti-sudoku.js');
 
 /**
  * Sorts players into rooms and manages each game.
@@ -48,6 +48,10 @@ class Manager extends EventEmitter {
    */
   _validatePlayer(playerId) {
     var player = this._players.get(playerId);
+
+    // check if player is registered
+    if (!player) return false;
+
     var game = this._gameRooms.get(player.roomId);
 
     // check if player is in active game
@@ -93,7 +97,7 @@ class Manager extends EventEmitter {
         var player = this._players.get(playerId);
         player.roomId = roomId;
         player.number = currPlayer++;
-        this.emit('playerAssigned', roomId, player.data);
+        this.emit('playerAssigned', roomId, player.number, player.data);
       });
       this._waitingPlayers.clear();
     }
@@ -117,8 +121,11 @@ class Manager extends EventEmitter {
       // TODO: implement a better system as this 'nuclear' approach may be annoying
       this._getPlayersInRoom(roomId).forEach((roomPlayerId) => {
         var player = this._players.get(roomPlayerId);
+
         this._players.delete(roomPlayerId);
-        this.emit('playerKicked', roomId, player.data);
+
+        // inform other players they were kicked from the room
+        if (playerId !== roomPlayerId) this.emit('playerKicked', roomId, player.data);
       });
       this.emit('roomDestroyed', roomId);
     } else {
