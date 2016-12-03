@@ -121,8 +121,11 @@ class Manager extends EventEmitter {
       // TODO: implement a better system as this 'nuclear' approach may be annoying
       this._getPlayersInRoom(roomId).forEach((roomPlayerId) => {
         var player = this._players.get(roomPlayerId);
+
         this._players.delete(roomPlayerId);
-        this.emit('playerKicked', roomId, player.data);
+
+        // inform other players they were kicked from the room
+        if (playerId !== roomPlayerId) this.emit('playerKicked', roomId, player.data);
       });
       this.emit('roomDestroyed', roomId);
     } else {

@@ -7,12 +7,13 @@ import AntiSudoku from '../../lib/anti-sudoku.js';
 export default class GameGrid {
   /**
    * Initialize the game grid.
-   * @param {node} container - DOM element to insert the grid into.
+   * @param {Element} container - DOM element to insert the grid into.
    * @param {InputController} controller - Input controller instance.
    */
   constructor(container, controller) {
     this._$container = $(container).addClass('grid-container');
     this._controller = controller;
+    this._disabled = true;
 
     this._constructGrid();
   }
@@ -21,6 +22,9 @@ export default class GameGrid {
    * Constructs the grid interface to display to game state.
    */
   _constructGrid() {
+    // remove any child elements first
+    this._$container.children().remove();
+
     for (let row = 0; row < 9; row++) {
       // make our row divs
       let $row = $('<div/>', { class:'grid-row' });
@@ -83,7 +87,7 @@ export default class GameGrid {
    * @private
    */
   _selectCell(event) {
-    if (this._player !== this._game.getPlayer()) return;
+    if (this._disabled || this._player !== this._game.getPlayer()) return;
 
     var $cellElem = $(event.target);
 
@@ -104,15 +108,15 @@ export default class GameGrid {
       });
 
       // prompt user for number to place
-      this._controller.insert(legalNumbers, (num) => this._placeNumber(num, row, col));
+      this._controller.select(legalNumbers, (num) => this._placeNumber(num, row, col));
     } else if (cell.player === this._player) {
       // cell has a value and we own it
       // show options to modify the cell
-      this._controller.modify((action) => {
-        if (action === 'remove') {
+      this._controller.select([{ name: 'Remove', class: 'remove' }, 'Move'], (action) => {
+        if (action === 'Remove') {
           // remove the number
           this._removeNumber(row, col);
-        } else if (action === 'move') {
+        } else if (action === 'Move') {
           // player wants to move - store the cell for the next selection
           this._moveCell = $cellElem;
 
@@ -229,21 +233,32 @@ export default class GameGrid {
       var $cell = this._getCell(cell.row, cell.col);
       $cell.addClass(`captured-${capture} captured-player-${player}`);
     });
+
+    this._disabled = true;
+    this._onComplete(player);
+    this.isOver = true;
   }
 
   /**
    * Create a new game.
    * @param {number} player - Assigned player number.
    * @param {socket} socket - SocketIO socket connected to the game server.
+   * @param {function} [onComplete] - Callback when the game is finished, passed the winning player.
    */
-  newGame(player, socket) {
+  newGame(player, socket, onComplete = () => {}) {
     this._player = player;
     this._socket = socket;
+    this._onComplete = onComplete;
     this._game = new AntiSudoku(this._onWin.bind(this));
+    this._disabled = false;
+    this.isOver = false;
+
+    this._constructGrid();
 
     this._setWaiting();
 
     // set up game events listeners from the server
+    // TODO: perhaps emit events instead of coupling with the socket
     this._socket.on('numberPlaced', ({ num, row, col }) => {
       this._placeNumber(num, row, col, false);
     });
@@ -253,5 +268,12 @@ export default class GameGrid {
     this._socket.on('numberMoved', ({ srcRow, srcCol, dstRow, dstCol }) => {
       this._moveNumber(srcRow, srcCol, dstRow, dstCol, false);
     });
+  }
+
+  /**
+   * Prevents interaction with the grid.
+   */
+  disable() {
+    this._disabled = true;
   }
 }
