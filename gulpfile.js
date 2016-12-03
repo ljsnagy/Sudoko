@@ -4,6 +4,7 @@ var browserify = require('browserify');
 var plumber = require('gulp-plumber');
 var source = require('vinyl-source-stream');
 var addsrc = require('gulp-add-src');
+var postcss = require('gulp-postcss');
 var concat = require('gulp-concat');
 var gutil = require('gulp-util');
 
@@ -39,8 +40,8 @@ gulp.task('client-js', function () {
 });
 
 gulp.task('client-css', function () {
-  return gulp.src('src/client/css/**.css')
-    .pipe(concat('client/css/app.css'))
+  return gulp.src('src/client/css/app.css', { base: 'src' })
+    .pipe(postcss([require('postcss-import')]))
     .pipe(gulp.dest(distDir))
 });
 
