@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Share+Tech+Mono');
+
 @import "sweetalert2/dist/sweetalert2.css";
 @import "gameGrid.css";
 @import "inputController.css";
@@ -5,6 +7,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 16px;
 }
 
