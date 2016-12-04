@@ -1,6 +1,6 @@
 ## Overview
 
-This game is inspired by Sudoku, it uses the same grid and numbering rules.
+This game is based on Sudoku, it uses the same grid and numbering rules.
 There are 2 players on the same grid with the objective to be the first to make a set of 1 to 9 (using a legal move) in either a row, column or nonet.
 You simply need to insert the last number to complete a set, it does not have to consist entirely of your own numbers.
 
