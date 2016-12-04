@@ -64,7 +64,7 @@ export default class GameGrid {
    * @private
    */
   _clearState() {
-    this._$container.find('.grid-cell').removeClass('selected highlighted');
+    this._$container.find('.grid-cell').removeClass(`selected-player-${this._player} highlighted`);
   }
 
   /**
@@ -99,7 +99,7 @@ export default class GameGrid {
     this._clearState();
 
     // add the selected class to cell that was clicked
-    $cellElem.addClass('selected');
+    $cellElem.addClass(`selected-player-${this._player}`);
 
     if (!cell.value) {
       // find out what numbers we can place

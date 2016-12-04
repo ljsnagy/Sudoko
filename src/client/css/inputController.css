@@ -20,17 +20,18 @@
     margin: 0 2px;
     padding: 0.2em;
     min-width: calc((100% / 9) - 4px);
-    border: 2px solid #444;
+    border: 2px solid #666;
     border-radius: 8px;
     cursor: pointer;
+    background-color: #FFF3C1;
 }
 .input-controller > div.input-option.remove
 {
-    color: red;
-    border-color: red;
+    color: #FF5252;
+    border-color: #FF5252;
 }
 
 .input-controller > .input-msg
 {
-    font-size: 0.8em;
+    font-size: 0.7em;
 }
