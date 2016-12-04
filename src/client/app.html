@@ -10,9 +10,31 @@
   <script src="js/app.js"></script>
 </head>
 <body>
-  <div id="game-container">
-    <div id="game-controller"></div>
-    <div id="game-grid"></div>
+  <div class="main-container">
+    <div class="header">
+      <h1>Sudoko</h1>
+      <h2>A 2 Player Game Inspired by Sudoku</h2>
+    </div>
+    <div class="game-container">
+      <div id="game-controller"></div>
+      <div id="game-grid"></div>
+    </div>
+    <div class="information">
+      <h2>Overview</h2>
+      <p>
+        This game is inspired by Sudoku, it uses the same grid and numbering rules.
+        There are 2 players on the same grid with the objective to be the first to make a set of 1 to 9 (using a legal move) in either a row, column or nonet.
+        You simply need to insert the last number to complete a set, it does not have to consist entirely of your own numbers.
+      </p>
+      <h2>Rules</h2>
+      <ol>
+        <li>A player can only use numbers 1 to 9.</li>
+        <li>The same number cannot be placed in any row, column or nonet.</li>
+        <li>A player may remove any number previously placed by them.</li>
+        <li>A player may move a number placed by them to the same row, column or nonet provided it results in a legal move.</li>
+        <li>A number that was last removed or moved cannot be placed on the same cell again.</li>
+      </ol>
+    </div>
   </div>
 </body>
 </html>
