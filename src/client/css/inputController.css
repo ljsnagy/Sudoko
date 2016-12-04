@@ -22,8 +22,9 @@
     min-width: calc((100% / 9) - 4px);
     border: 2px solid #666;
     border-radius: 8px;
-    cursor: pointer;
     background-color: #FFF3C1;
+    cursor: pointer;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
 }
 .input-controller > div.input-option.remove
 {
@@ -33,5 +34,12 @@
 
 .input-controller > .input-msg
 {
-    font-size: 0.7em;
+    font-size: 0.8em;
+}
+
+@media screen and (max-width : 480px) {
+    .input-controller
+    {
+        font-size: 1.4em;
+    }
 }

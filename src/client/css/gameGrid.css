@@ -1,11 +1,13 @@
 .grid-container
 {
+    box-sizing: border-box;
     width: 450px;
     height: 450px;
-    font-size: 2em;
-    background-color: #FFF3C1;
-    border: 3px solid #666;
+    margin: 0 auto;
+    padding: 3px;
     border-radius: 8px;
+    font-size: 2em;
+    background-color: #666;
 }
 
 .grid-container > .grid-row
@@ -24,7 +26,9 @@
     width: calc(100% / 9);
     height: 100%;
     border: 1px solid #666;
+    background-color: #FFF3C1;
     cursor: pointer;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
 }
 
 /* vertical third dividers */
@@ -153,4 +157,12 @@
 .grid-container > .grid-row > .grid-cell.captured-player-2
 {
     border-color: #01579b;
+}
+
+@media screen and (max-width : 480px) {
+    .grid-container
+    {
+        width: 300px;
+        height: 300px;
+    }
 }
