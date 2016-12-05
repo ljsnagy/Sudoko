@@ -1,0 +1,183 @@
+.grid-container
+{
+    box-sizing: border-box;
+    width: 456px;
+    height: 456px;
+    margin: 0 auto;
+    padding: 3px;
+    border-radius: 8px;
+    font-size: 2em;
+    background-color: #666;
+}
+
+.grid-container > .grid-row
+{
+    width: 100%;
+    height: calc(100% / 9);
+}
+
+.grid-container > .grid-row > .grid-cell
+{
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: left;
+    width: calc(100% / 9);
+    height: 100%;
+    border: 1px solid #666;
+    background-color: #FFF3C1;
+    cursor: pointer;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+}
+
+/* vertical third dividers */
+.grid-row:nth-child(3) > .grid-cell,  .grid-row:nth-child(6) > .grid-cell
+{
+    border-bottom-width: 2px;
+}
+.grid-row:nth-child(4) > .grid-cell,  .grid-row:nth-child(7) > .grid-cell
+{
+    border-top-width: 2px;
+}
+
+/* horizontal third dividers */
+.grid-row > .grid-cell:nth-child(3), .grid-row > .grid-cell:nth-child(6)
+{
+    border-right-width: 2px;
+}
+.grid-row > .grid-cell:nth-child(4), .grid-row > .grid-cell:nth-child(7)
+{
+    border-left-width: 2px;
+}
+
+/* grid cell states */
+.grid-container > .grid-row > .grid-cell.selected-player-1
+{
+    position: relative;
+    box-shadow: 0 0 2px 3px #EF5350;
+    border-color: #F44336;
+}
+.grid-container > .grid-row > .grid-cell.selected-player-2
+{
+    position: relative;
+    box-shadow: 0 0 2px 3px #0277BD;
+    border-color: #01579b;
+}
+.grid-container > .grid-row > .grid-cell.highlighted
+{
+    background-color: #E6D58D;
+}
+.grid-container > .grid-row > .grid-cell.removed
+{
+    color: #999;
+}
+
+/* player colours */
+.grid-container > .grid-row > .grid-cell.player-1
+{
+    color: #F44336;
+}
+.grid-container > .grid-row > .grid-cell.player-2
+{
+    color: #01579b;
+}
+
+/* highlights when a column is captured */
+.grid-container > .grid-row > .grid-cell.captured-column
+{
+    border-width: 0 2px;
+}
+.grid-container > .grid-row:first-child > .grid-cell.captured-column
+{
+    border-top-width: 2px;
+    padding-bottom: 2px;
+}
+.grid-container > .grid-row:nth-child(9) > .grid-cell.captured-column
+{
+    border-bottom-width: 2px;
+    padding-top: 2px;
+}
+
+/* highlights when a row is captured */
+.grid-container > .grid-row > .grid-cell.captured-row
+{
+    border-width: 2px 0;
+}
+.grid-container > .grid-row > .grid-cell.captured-row:first-child
+{
+    border-left-width: 2px;
+    padding-right: 2px;
+}
+.grid-container > .grid-row > .grid-cell.captured-row:nth-child(9)
+{
+    border-right-width: 2px;
+    padding-left: 2px;
+}
+
+/* highlights when a nonet is captured */
+.grid-container > .grid-row > .grid-cell.captured-nonet
+{
+    border-width: 0;
+}
+.grid-container > .grid-row:first-child > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(4) > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(7) > .grid-cell.captured-nonet
+{
+    border-top-width: 2px;
+    padding-bottom: 2px;
+}
+.grid-container > .grid-row:nth-child(3) > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(6) > .grid-cell.captured-nonet,
+.grid-container > .grid-row:nth-child(9) > .grid-cell.captured-nonet
+{
+    border-bottom-width: 2px;
+    padding-top: 2px;
+}
+.grid-container > .grid-row > .grid-cell.captured-nonet:first-child,
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(4),
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(7)
+{
+    border-left-width: 2px;
+    padding-right: 2px;
+}
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(3),
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(6),
+.grid-container > .grid-row > .grid-cell.captured-nonet:nth-child(9)
+{
+    border-right-width: 2px;
+    padding-left: 2px;
+}
+
+/* highlight colour for players */
+.grid-container > .grid-row > .grid-cell.captured-player-1
+{
+    border-color: #F44336;
+}
+.grid-container > .grid-row > .grid-cell.captured-player-2
+{
+    border-color: #01579b;
+}
+
+/* number inserted animation */
+.grid-container > .grid-row > .grid-cell.appear
+{
+    animation: appear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes appear {
+    from {
+        font-size: 0;
+    }
+    to {
+        font-size: inherit;
+    }
+}
+
+@media screen and (max-width : 480px) {
+    .grid-container
+    {
+        width: 300px;
+        height: 300px;
+    }
+}
