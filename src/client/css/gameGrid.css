@@ -1,8 +1,8 @@
 .grid-container
 {
     box-sizing: border-box;
-    width: 450px;
-    height: 450px;
+    width: 456px;
+    height: 456px;
     margin: 0 auto;
     padding: 3px;
     border-radius: 8px;
@@ -157,6 +157,21 @@
 .grid-container > .grid-row > .grid-cell.captured-player-2
 {
     border-color: #01579b;
+}
+
+/* number inserted animation */
+.grid-container > .grid-row > .grid-cell.appear
+{
+    animation: appear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes appear {
+    from {
+        font-size: 0;
+    }
+    to {
+        font-size: inherit;
+    }
 }
 
 @media screen and (max-width : 480px) {
