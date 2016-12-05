@@ -1,5 +1,5 @@
 var EventEmitter = require('events');
-var { default: AntiSudoku } = require('../../lib/anti-sudoku.js');
+var { default: Sudoko } = require('../../lib/sudoko.js');
 
 /**
  * Sorts players into rooms and manages each game.
@@ -16,7 +16,7 @@ class Manager extends EventEmitter {
   /**
    * Returns the game for the current room player is in.
    * @param {string} playerId
-   * @returns {AntiSudoku} - Game instance.
+   * @returns {Sudoko} - Game instance.
    * @private
    */
   _getGameRoom(playerId) {
@@ -87,7 +87,7 @@ class Manager extends EventEmitter {
       var roomId = String(Date.now());
 
       // create a room with a new game instance
-      this._gameRooms.set(roomId, new AntiSudoku());
+      this._gameRooms.set(roomId, new Sudoko());
 
       // keep track of the player number
       var currPlayer = 1;
