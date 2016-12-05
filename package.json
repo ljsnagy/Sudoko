@@ -1,12 +1,16 @@
 {
   "name": "anti-sudoku",
   "version": "1.0.0",
+  "engines": {
+    "node": "6.9.1"
+  },
   "description": "2 player game inspired by sudoku",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "postinstall": "gulp build",
     "start": "node dist/server/app.js",
     "test": "mocha --compilers js:babel-register"
   },
