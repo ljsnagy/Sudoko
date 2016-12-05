@@ -1,12 +1,12 @@
 var should = require('should');
-var { default: AntiSudoku } = require('../src/lib/anti-sudoku.js');
+var { default: Sudoko } = require('../src/lib/sudoko.js');
 
 should.Assertion.addChain('return');
 
 describe('Anti Sudoku', () => {
   var game;
 
-  beforeEach(() => game = new AntiSudoku());
+  beforeEach(() => game = new Sudoko());
 
   it('should return the current player', () => {
     game.getPlayer().should.return.exactly(1);
@@ -47,7 +47,7 @@ describe('Anti Sudoku', () => {
         game.placeNumber(1, row, col).should.return.true();
         game.placeNumber(2, row, col).should.return.false();
         game.getCell(row, col).should.match({value: 1});
-        game = new AntiSudoku();
+        game = new Sudoko();
       }
     }
   });
@@ -60,7 +60,7 @@ describe('Anti Sudoku', () => {
         game.placeNumber(val, row, col);
         game.getCell(row, col).should.be.empty();
       }
-      game = new AntiSudoku();
+      game = new Sudoko();
     }
   });
 
@@ -72,7 +72,7 @@ describe('Anti Sudoku', () => {
         game.placeNumber(val, row, col);
         game.getCell(row, col).should.be.empty();
       }
-      game = new AntiSudoku();
+      game = new Sudoko();
     }
   });
 
@@ -89,7 +89,7 @@ describe('Anti Sudoku', () => {
             }
           }
         }
-        game = new AntiSudoku();
+        game = new Sudoko();
       }
     }
   });
@@ -126,7 +126,7 @@ describe('Anti Sudoku', () => {
         game.moveNumber(row, 0, row, col).should.return.true();
         game.getCell(row, col).should.match({value: val});
         game.getCell(row, 0).should.be.empty();
-        game = new AntiSudoku();
+        game = new Sudoko();
       }
     }
   });
@@ -139,7 +139,7 @@ describe('Anti Sudoku', () => {
         game.moveNumber(0, col, row, col).should.return.true();
         game.getCell(row, col).should.match({value: val});
         game.getCell(0, col).should.be.empty();
-        game = new AntiSudoku();
+        game = new Sudoko();
       }
     }
   });
@@ -156,7 +156,7 @@ describe('Anti Sudoku', () => {
               game.getCell(row + i, col + j).should.match({value: val});
               game.getCell(row, col).should.be.empty();
             }
-            game = new AntiSudoku();
+            game = new Sudoko();
           }
         }
       }
@@ -173,7 +173,7 @@ describe('Anti Sudoku', () => {
           game.getCell(0, 0).should.match({value: val});
           game.getCell(row, col).should.be.empty();
         }
-        game = new AntiSudoku();
+        game = new Sudoko();
       }
     }
   });
@@ -221,7 +221,7 @@ describe('Anti Sudoku', () => {
   });
 
   it('should call the callback when I complete a row', (done) => {
-    game = new AntiSudoku((player) => {
+    game = new Sudoko((player) => {
       player.should.be.exactly(1);
       done();
     });
@@ -231,7 +231,7 @@ describe('Anti Sudoku', () => {
   });
 
   it('should call the callback when I complete a column', (done) => {
-    game = new AntiSudoku((player) => {
+    game = new Sudoko((player) => {
       player.should.be.exactly(1);
       done();
     });
@@ -241,7 +241,7 @@ describe('Anti Sudoku', () => {
   });
 
   it('should call the callback when I complete a nonet', (done) => {
-    game = new AntiSudoku((player) => {
+    game = new Sudoko((player) => {
       player.should.be.exactly(1);
       done();
     });

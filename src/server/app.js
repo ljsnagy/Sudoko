@@ -6,16 +6,15 @@ var path = require('path');
 
 var manager = require('./lib/manager.js');
 
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
 
 /* --- express --- */
 app.get('/', (req, res) => {
   res.sendFile('app.html', { root: path.join(__dirname, '../client') });
 });
 
-// serve files from client and lib directory
+// serve files from client directory
 app.use(express.static(path.join(__dirname, '../client')));
-app.use(express.static(path.join(__dirname, '../lib')));
 
 // redirect to index on 404
 app.use((req, res) => res.redirect('/'));

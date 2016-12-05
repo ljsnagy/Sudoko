@@ -3,12 +3,19 @@ var babel = require('gulp-babel');
 var browserify = require('browserify');
 var plumber = require('gulp-plumber');
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var addsrc = require('gulp-add-src');
 var postcss = require('gulp-postcss');
-var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var sourcemaps = require('gulp-sourcemaps');
 var gutil = require('gulp-util');
 
 var distDir = 'dist';
+var isProduction = process.env.NODE_ENV === 'production';
+
+var inDev = function(plugin) {
+  return isProduction ?  gutil.noop() : plugin;
+};
 
 var handler = function handler(err) {
   gutil.log(err.stack || err);
@@ -28,20 +35,33 @@ gulp.task('lib', function () {
 });
 
 gulp.task('client-js', function () {
-  var b = browserify({ debug: true })
+  var b = browserify({ debug: !isProduction })
     .add('src/client/js/app.js')
     .transform(require('babelify'))
     .transform(require('browserify-shim'));
 
   return b.bundle().on('error', handler)
     .pipe(source('client/js/app.js'))
+    .pipe(buffer())
+    .pipe(plumber({errorHandler: handler}))
+    .pipe(inDev(sourcemaps.init({ loadMaps: true })))
+    .pipe(uglify())
+    .pipe(inDev(sourcemaps.write()))
     .pipe(addsrc('src/client/js/lib/*.js', { base: 'src' }))
     .pipe(gulp.dest(distDir));
 });
 
 gulp.task('client-css', function () {
   return gulp.src('src/client/css/app.css', { base: 'src' })
-    .pipe(postcss([require('postcss-import')]))
+    .pipe(plumber({errorHandler: handler}))
+    .pipe(inDev(sourcemaps.init()))
+    .pipe(postcss(
+      [
+        require('postcss-import'),
+        require('cssnano'),
+      ]
+    ))
+    .pipe(inDev(sourcemaps.write()))
     .pipe(gulp.dest(distDir))
 });
 

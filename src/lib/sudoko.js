@@ -24,8 +24,8 @@ var validateGrid = function validateGrid(row, col) {
   return (row < 9 && col < 9) && (row >= 0 && col >= 0);
 };
 
-/** Represents an Anti Sudoku game. */
-export default class AntiSudoku {
+/** Represents an Sudoko game. */
+export default class Sudoko {
   /**
    * Set up new game.
    * @param {function} onComplete - Called when game is won and is passed the winning player and relevant cells.

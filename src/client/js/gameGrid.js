@@ -1,5 +1,5 @@
 import $ from 'zepto';
-import AntiSudoku from '../../lib/anti-sudoku.js';
+import Sudoko from '../../lib/sudoko.js';
 
 /**
  * Manages and displays the game state.
@@ -249,7 +249,7 @@ export default class GameGrid {
     this._player = player;
     this._socket = socket;
     this._onComplete = onComplete;
-    this._game = new AntiSudoku(this._onWin.bind(this));
+    this._game = new Sudoko(this._onWin.bind(this));
     this._disabled = false;
     this.isOver = false;
 
