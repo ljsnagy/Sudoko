@@ -1,8 +1,14 @@
 import Zepto from 'zepto';
 import io from 'socket.io-client';
+import swal from 'sweetalert2';
 import GameGrid from './gameGrid.js';
 import InputController from './inputController.js';
-import swal from 'sweetalert2';
+
+// sweet alert defaults
+swal.setDefaults({
+  background: '#FFF8DD',
+  buttonsStyling: false,
+});
 
 // connect to game server
 var socket = io();
@@ -22,7 +28,7 @@ Zepto(function DOMLoaded() {
       // ask the server to assign us an available room
       socket.emit('newGame');
 
-      controller.clear('Searching for another player...');
+      controller.clear('Searching for Another Player');
     });
   };
 

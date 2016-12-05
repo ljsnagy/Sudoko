@@ -64,7 +64,7 @@ export default class GameGrid {
    * @private
    */
   _clearState() {
-    this._$container.find('.grid-cell').removeClass('selected highlighted');
+    this._$container.find('.grid-cell').removeClass(`selected-player-${this._player} highlighted`);
   }
 
   /**
@@ -99,7 +99,7 @@ export default class GameGrid {
     this._clearState();
 
     // add the selected class to cell that was clicked
-    $cellElem.addClass('selected');
+    $cellElem.addClass(`selected-player-${this._player}`);
 
     if (!cell.value) {
       // find out what numbers we can place
@@ -166,7 +166,7 @@ export default class GameGrid {
     if (this._game.placeNumber(num, row, col)) {
       $cell
         .removeClass('removed')
-        .addClass(`player-${currPlayer}`)
+        .addClass(`player-${currPlayer} appear`)
         .text(num);
 
       this._clearState();
@@ -187,7 +187,7 @@ export default class GameGrid {
     var $cell = this._getCell(row, col);
 
     if (this._game.removeNumber(row, col)) {
-      $cell.removeClass('player-1 player-2').addClass('removed');
+      $cell.removeClass('player-1 player-2 appear').addClass('removed');
 
       this._clearState();
       this._setWaiting();
@@ -211,8 +211,8 @@ export default class GameGrid {
     var currPlayer = this._game.getPlayer();
 
     if (this._game.moveNumber(srcRow, srcCol, dstRow, dstCol)) {
-      $dstCell.addClass(`player-${currPlayer}`).text($srcCell.text());
-      $srcCell.removeClass('player-1 player-2').addClass('removed');
+      $dstCell.addClass(`player-${currPlayer} appear`).text($srcCell.text());
+      $srcCell.removeClass('player-1 player-2 appear').addClass('removed');
 
       this._clearState();
       this._setWaiting();
